@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import {Server} from 'http'
 import { connectDB } from './app/config/db';
 import app from './app';
