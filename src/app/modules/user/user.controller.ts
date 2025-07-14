@@ -1,43 +1,42 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-console */
 import { Request, Response } from "express";
 import { User } from "./user.model";
 import { StatusCodes } from "http-status-codes";
+import { UserService } from "./user.service";
+import { catchsync } from "../../utils/catchAsync";
+import { sendResponse } from "../../utils/sendResponse";
+// import AppError from "../../errorHelper/AppError";
 
-const createUser = async (req: Request, res: Response)=>{
-    try {
-        const {name, email} = req.body;
-        const user = await User.create({name, email})
-        res.status(StatusCodes.CREATED).json({
-            message:"User Created Successfully",
-            user
-        })
-    } catch (error: any) {
-        console.log(error)
-        res.status(StatusCodes.BAD_REQUEST).json({
-            message: `Something went worng creating the user... ${error.message}`
-        })
-    }
 
-};
-const getAllUsers = async (req: Request, res: Response)=>{
-    try {
-        const users = await User.find({});
-        if(!users || users.length===1){
+
+const createUser = catchsync(async (req: Request, res: Response)=>{
+        const user = await UserService.createUser(req.body)
+        
+        sendResponse(res, {
+            success: true,
+            statusCode: StatusCodes.CREATED,
+            message: "User Created Successfully",
+            data: user
+        })
+})
+const getAllUsers = (async(req: Request, res: Response)=>{
+        const result = await UserService.getAllUsers()
+
+        if(!result || !result.date || result.date.length === 0){
             return res.status(StatusCodes.NOT_FOUND).json({
                 message: "No Users found!"
             })
         } 
-        res.status(StatusCodes.OK).json({
-            message: 'Users retrieved successfully!',
-            data: users,
-        });
-        
-    } catch (error: any) {
-        console.log(error)
-        res.status(StatusCodes.BAD_REQUEST).json({
-            message: `Something went wrong while fetching Users ....${error.message}`
+        sendResponse(res, {
+            success: true,
+            statusCode: StatusCodes.OK,
+            message: "Users retrieved successfully",
+            data: result.date,
+            meta: result.meta
         })
-    }
-};
+})
 const getUserById = async (req: Request, res: Response)=>{
     try {
         const {id} = req.body;
@@ -113,3 +112,5 @@ export const UseControllers ={
     updateUser,
     deleteUser
 }
+
+// route matching -> controller -> service -> model -> DB
