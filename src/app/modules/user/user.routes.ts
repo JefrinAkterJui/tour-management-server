@@ -5,12 +5,14 @@ import { Router } from "express";
 import { UseControllers } from "./user.controller";
 import { createUserZodSchema } from "./user.validation";
 import { validateRequest } from "../../middleware/validateRequest";
+import { checkAuth } from "../../middleware/checkAuth";
+import { Role } from "./user.interface";
 
 const router= Router()
 
 
 
 router.post('/register', validateRequest(createUserZodSchema), UseControllers.createUser)
-router.get('/', UseControllers.getAllUsers)
+router.get('/', checkAuth(Role.ADMIN) , UseControllers.getAllUsers)
 
 export const UserRoutes = router
