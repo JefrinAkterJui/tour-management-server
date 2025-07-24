@@ -16,6 +16,7 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
         if (!authRoles.includes((veryfiedToken.role as string))) {
             throw new AppError(403, "You are not permitted to view this route!!");
         }
+        req.user=veryfiedToken
         next();
 
     } catch (error) {

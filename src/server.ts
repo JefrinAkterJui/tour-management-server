@@ -3,6 +3,7 @@
 import {Server} from 'http'
 import { connectDB } from './app/config/db';
 import app from './app';
+import { seedSuperAdmin } from './app/utils/seedSuperAdmin';
 
 const PORT = 5000
 let server : Server;
@@ -18,7 +19,10 @@ async function main(){
     }
 }
 
-main()
+(async ()=>{
+    await main()
+    await seedSuperAdmin()
+})()
 
 // 1. unhandeled rejection error
 process.on("unhandledRejection", ()=>{

@@ -12,6 +12,7 @@ export interface IAuthProvider{
 }
 export enum Role{
     ADMIN = "ADMIN",
+    SUPERADMIN="SUPERADMIN",
     USER = "USER",
     GUID = "GUID"
 }
@@ -25,7 +26,7 @@ export interface IUser{
     address?: string;
     isDelete?: string;
     isActive?: IsActive;
-    isVerified?: string;
+    isVerified?: boolean;
     role?: Role;
     auths?: IAuthProvider[];
     bookings?: Types.ObjectId[];
