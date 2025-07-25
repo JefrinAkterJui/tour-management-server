@@ -7,18 +7,12 @@ import { sendResponse } from "../../utils/sendResponse"
 import { StatusCodes } from "http-status-codes"
 import { authService } from "./auth.service"
 import AppError from "../../errorHelper/AppError"
+import { setAuthCookeis } from "../../utils/setCookeis"
 
 const creadentialLogin = catchsync(async (req: Request, res: Response, next: NextFunction)=>{
         const loginInfo = await authService.creadentialLogin(req.body)
 
-        res.cookie("accessToken", loginInfo.accessToken, {
-            httpOnly: true,
-            secure: true
-        })
-        res.cookie("refreshToken", loginInfo.refreshToken, {
-            httpOnly: true,
-            secure: true
-        })
+        setAuthCookeis(res, loginInfo)
         sendResponse(res, {
             success: true,
             statusCode: StatusCodes.CREATED,
@@ -32,16 +26,37 @@ const getNewAccessToken = catchsync(async (req: Request, res: Response, next: Ne
             throw new AppError(StatusCodes.BAD_REQUEST, "No refresh Token recived from cookeis")
         }
         const tokenInfo = await authService.getNewAccessToken(refreshToken)
+
+        setAuthCookeis(res, tokenInfo);
         sendResponse(res, {
             success: true,
             statusCode: StatusCodes.CREATED,
-            message: "User Logged In Successfully",
+            message: "New Access Token Retrive Successfully",
             data: tokenInfo
+        })
+})
+const logout = catchsync(async (req: Request, res: Response, next: NextFunction)=>{
+        res.clearCookie("accessToken",{
+            httpOnly: true,
+            secure: true,
+            sameSite: "lax"
+        });
+        res.clearCookie("refreshToken",{
+            httpOnly: true,
+            secure: true,
+            sameSite: "lax"
+        })
+        sendResponse(res, {
+            success: true,
+            statusCode: StatusCodes.CREATED,
+            message: "User Log out Successfully",
+            data: null
         })
 })
 
 
 export const authControllers ={
     creadentialLogin,
-    getNewAccessToken
+    getNewAccessToken,
+    logout
 }
