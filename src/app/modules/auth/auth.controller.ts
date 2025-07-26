@@ -53,10 +53,26 @@ const logout = catchsync(async (req: Request, res: Response, next: NextFunction)
             data: null
         })
 })
+const resetPassword = catchsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const newPassword = req.body.newPassword;
+    const oldPassword = req.body.oldPassword;
+    const decodedToken = req.user
+
+    await authService.resetPassword(oldPassword, newPassword, decodedToken);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: "Password Changed Successfully",
+        data: null,
+    })
+})
 
 
 export const authControllers ={
     creadentialLogin,
     getNewAccessToken,
-    logout
+    logout,
+    resetPassword
 }
