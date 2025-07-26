@@ -5,9 +5,19 @@ import { router } from "./app/routes";
 import { globalErrorHandeller } from "./app/middleware/globalErrorHandeller";
 import NotFount from "./app/middleware/notFound";
 import cookieParser from "cookie-parser" 
+import passport from "passport";
+import expressSession from "express-session" 
 
 connectDB()
 const app : Application = express()
+
+app.use(expressSession({
+    secret: "Your secret",
+    resave:false,
+    saveUninitialized:false
+}))
+app.use(passport.initialize())
+app.use(passport.session())
 app.use(express.json())
 app.use(cors())
 app.use(cookieParser())
