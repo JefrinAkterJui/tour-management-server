@@ -1,11 +1,9 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-console */
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { UserService } from "./user.service";
 import { catchsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
+import { JwtPayload } from "jsonwebtoken";
 // import AppError from "../../errorHelper/AppError";
 
 
@@ -42,7 +40,7 @@ const updatedUser = catchsync(async (req: Request, res: Response)=>{
         // const verifiedToken = verifyToken(token as string, process.env.JWT_ACCESS_SECRET as string) as JwtPayload
         const verifiedToken = req.user
         const payload = req.body
-        const user = await UserService.updateUser(userId, payload, verifiedToken)
+        const user = await UserService.updateUser(userId, payload, verifiedToken as JwtPayload)
         
         sendResponse(res, {
             success: true,
