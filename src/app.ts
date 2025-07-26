@@ -7,12 +7,13 @@ import NotFount from "./app/middleware/notFound";
 import cookieParser from "cookie-parser" 
 import passport from "passport";
 import expressSession from "express-session" 
+import "./app/config/passport"
 
 connectDB()
 const app : Application = express()
 
 app.use(expressSession({
-    secret: "Your secret",
+    secret: process.env.EXPRESS_SESSION_SECRET as string,
     resave:false,
     saveUninitialized:false
 }))

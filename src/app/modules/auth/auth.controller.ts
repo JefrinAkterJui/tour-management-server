@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
 import { NextFunction, Request, Response } from "express"
@@ -7,6 +8,8 @@ import { StatusCodes } from "http-status-codes"
 import { authService } from "./auth.service"
 import AppError from "../../errorHelper/AppError"
 import { setAuthCookeis } from "../../utils/setCookeis"
+import { createUserTokens } from "../../utils/userTokens"
+import { JwtPayload } from "jsonwebtoken"
 
 const creadentialLogin = catchsync(async (req: Request, res: Response, next: NextFunction)=>{
         const loginInfo = await authService.creadentialLogin(req.body)
@@ -58,7 +61,7 @@ const resetPassword = catchsync(async (req: Request, res: Response, next: NextFu
     const oldPassword = req.body.oldPassword;
     const decodedToken = req.user
 
-    await authService.resetPassword(oldPassword, newPassword, decodedToken);
+    await authService.resetPassword(oldPassword, newPassword, decodedToken as JwtPayload);
 
     sendResponse(res, {
         success: true,
@@ -67,11 +70,28 @@ const resetPassword = catchsync(async (req: Request, res: Response, next: NextFu
         data: null,
     })
 })
+const googleCallbackController = catchsync(async (req: Request, res: Response, next: NextFunction) => {
+    let redirectTo = req.query.state? req.query.state as string : ""
+    if(redirectTo.startsWith("/")){
+        redirectTo= redirectTo.slice(1)
+    }
+
+    const user = req.user
+    console.log("User", user)
+    if(!user){
+        throw new AppError(StatusCodes.NOT_FOUND, "User Not Found")
+    }
+    const tokenInfo = createUserTokens(user)
+
+    setAuthCookeis(res, tokenInfo)
+    res.redirect(`${process.env.FRONTEND_URL as string}/${redirectTo}`)
+})
 
 
 export const authControllers ={
     creadentialLogin,
     getNewAccessToken,
     logout,
-    resetPassword
+    resetPassword,
+    googleCallbackController
 }
