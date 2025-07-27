@@ -10,17 +10,30 @@ import AppError from "../../errorHelper/AppError"
 import { setAuthCookeis } from "../../utils/setCookeis"
 import { createUserTokens } from "../../utils/userTokens"
 import { JwtPayload } from "jsonwebtoken"
+import passport from "passport"
 
 const creadentialLogin = catchsync(async (req: Request, res: Response, next: NextFunction)=>{
-        const loginInfo = await authService.creadentialLogin(req.body)
+        // const loginInfo = await authService.creadentialLogin(req.body)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        passport.authenticate("local", async (error: any, user: any, info: any)=>{
+            if(error){
+                return next(new AppError(401, error))
+            }
+            if(!user){
+                return next(new AppError(401, info.message))
+            }
+            
+            const userToken = await createUserTokens(user)
+            const {password: pass, ...rest} = user.toObject()
 
-        setAuthCookeis(res, loginInfo)
-        sendResponse(res, {
-            success: true,
-            statusCode: StatusCodes.CREATED,
-            message: "User Logged In Successfully",
-            data: loginInfo
-        })
+            setAuthCookeis(res, userToken)
+            sendResponse(res, {
+                success: true,
+                statusCode: StatusCodes.CREATED,
+                message: "User Logged In Successfully",
+                data: rest
+            })
+        })(req, res, next)
 });
 const getNewAccessToken = catchsync(async (req: Request, res: Response, next: NextFunction)=>{
         const refreshToken = req.cookies.refreshToken
