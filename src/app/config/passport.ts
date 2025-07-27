@@ -3,6 +3,47 @@ import passport from "passport";
 import { Strategy as GoogleStrategy, Profile, VerifyCallback } from "passport-google-oauth20";
 import { User } from "../modules/user/user.model";
 import { Role } from "../modules/user/user.interface";
+import { Strategy as localStrategy } from "passport-local";
+import bcryptjs from "bcryptjs"
+
+passport.use(
+    new localStrategy(
+        {
+            usernameField: "email",
+            passwordField: "password"
+        },
+        async (email: string, password: string, done) => {
+            try {
+                const isUserExist = await User.findOne({email});
+
+                if(!isUserExist){
+                    return done(null, false, {message: "User does not exist"})
+                }
+                // if(!isUserExist){
+                //     return done("User does not exist")
+                // }
+
+                const isGoogleAthenticated = await isUserExist.auths?.some(providerObjects => providerObjects.provider == "google")
+                if(isGoogleAthenticated && !isUserExist.password){
+                    return done( null, false, {message: "You have athenticated through google. So if you want to log in credentials, then at first login with google and set a password for your Gmail and then you can login with Gmail and password."})
+                }
+                // if(isGoogleAthenticated){
+                //     return done( "You have athenticated through google. So if you want to log in credentials, then at first login with google and set a password for your Gmail and then you can login with Gmail and password.")
+                // }
+
+                const isPasswordMatched = await bcryptjs.compare(password as string , isUserExist.password as string)
+
+                if(!isPasswordMatched){
+                    return done(null, false, {message: "Password does not exist"})
+                }
+
+                return done(null , isUserExist)
+            } catch (error) {
+                done(error)
+            }
+        }
+    )
+)
 
 passport.use(
     new GoogleStrategy(
