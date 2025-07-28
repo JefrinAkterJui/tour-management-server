@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
-import { IDivission } from "./divission.interface";
+import { IDivision } from "./division.interface";
 
-const divissionSchema = new Schema<IDivission>(
+const divisionSchema = new Schema<IDivision>(
     {
         name: { type: String, required: true, unique: true },
         slug: { type: String,  unique: true },
@@ -13,4 +13,4 @@ const divissionSchema = new Schema<IDivission>(
     }
 );
 
-export const Divission = model<IDivission>("Divission", divissionSchema)
+export const Division = model<IDivision>("Division", divisionSchema)
