@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-console */
 import { Router } from "express";
 import { UseControllers } from "./user.controller";
 import { createUserZodSchema } from "./user.validation";
