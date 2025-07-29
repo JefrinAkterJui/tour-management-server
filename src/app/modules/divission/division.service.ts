@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 import { IDivision } from "./division.interface";
 import { Division } from "./division.model";
 
@@ -8,16 +7,16 @@ const createDivision = async (payload: IDivision) => {
     if (existingDivision) {
         throw new Error("A division with this name already exists.");
     }
-    const baseSlug = payload.name.toLowerCase().split(" ").join("-");
-    let slug = `${baseSlug}-division`;
+    // const baseSlug = payload.name.toLowerCase().split(" ").join("-");
+    // let slug = `${baseSlug}-division`;
 
-    let counter = 1;
-    let uniqueSlug = slug;
-    while (await Division.exists({ slug: uniqueSlug })) {
-        uniqueSlug = `${slug}-${counter++}`;
-    }
+    // let counter = 1;
+    // let uniqueSlug = slug;
+    // while (await Division.exists({ slug: uniqueSlug })) {
+    //     uniqueSlug = `${slug}-${counter++}`;
+    // }
 
-    payload.slug = uniqueSlug;
+    // payload.slug = uniqueSlug;
 
     const division = await Division.create(payload);
 
@@ -50,17 +49,17 @@ const updateDivision = async (id: string, payload: Partial<IDivision>) => {
     if (duplicateDivision) {
         throw new Error("A division with this name already exists.");
     }
-    if(payload.name){
-        const baseSlug = payload.name.toLowerCase().split(" ").join("-");
-        let slug = `${baseSlug}-division`;
+    // if(payload.name){
+    //     const baseSlug = payload.name.toLowerCase().split(" ").join("-");
+    //     let slug = `${baseSlug}-division`;
 
-        let counter = 1;
-        let uniqueSlug = slug;
-        while (await Division.exists({ slug: uniqueSlug })) {
-            uniqueSlug = `${slug}-${counter++}`;
-        }
-        payload.slug = uniqueSlug;
-    }
+    //     let counter = 1;
+    //     let uniqueSlug = slug;
+    //     while (await Division.exists({ slug: uniqueSlug })) {
+    //         uniqueSlug = `${slug}-${counter++}`;
+    //     }
+    //     payload.slug = uniqueSlug;
+    // }
 
     const updatedDivision = await Division.findByIdAndUpdate(id, payload, { new: true, runValidators: true })
 
