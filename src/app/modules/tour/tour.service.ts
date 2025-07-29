@@ -1,3 +1,5 @@
+/* eslint-disable prefer-const */
+import { Division } from "../divission/division.model";
 import { ITour, ITourType } from "./tour.interface";
 import { Tour, TourType } from "./tour.model";
 
@@ -6,6 +8,21 @@ const createTour = async (payload: ITour) => {
     if (existingTour) {
         throw new Error("A tour with this title already exists.");
     }
+    const division = await Division.findById(payload.divisionId);
+    if (!division) {
+        throw new Error("Division not found.");
+     }
+    const baseSlug = payload.title.toLowerCase().split(" ").join("-");
+    const divisionSlug = division.name.toLowerCase().split("").join("")
+    let slug = `${baseSlug}-tour-${divisionSlug}`;
+    
+    let counter = 1;
+    let uniqueSlug = slug;
+    while (await Tour.exists({ slug: uniqueSlug })) {
+        uniqueSlug = `${slug}-${counter++}`;
+    }
+    
+    payload.slug = uniqueSlug;
 
     const tour = await Tour.create(payload)
 
@@ -43,7 +60,11 @@ const deleteTour = async (id: string) => {
 };
 
 const createTourType = async (payload: ITourType) => {
-    const existingTourType = await TourType.findOne({ name: payload.name });
+    const { name } = payload;
+    if (!name) {
+        throw new Error("Name is required");
+    }
+    const existingTourType = await TourType.findOne({ name });
 
     if (existingTourType) {
         throw new Error("Tour type already exists.");

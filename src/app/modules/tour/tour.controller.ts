@@ -58,7 +58,7 @@ const getAllTourTypes = catchsync(async (req: Request, res: Response) => {
 
 const createTourType = catchsync(async (req: Request, res: Response) => {
     const { name } = req.body;
-    const result = await TourService.createTourType(name);
+    const result = await TourService.createTourType({name});
     sendResponse(res, {
         statusCode: 201,
         success: true,
@@ -69,8 +69,8 @@ const createTourType = catchsync(async (req: Request, res: Response) => {
 
 const updateTourType = catchsync(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { name } = req.body;
-    const result = await TourService.updateTourType(id, name);
+    const payload = req.body;
+    const result = await TourService.updateTourType(id, payload);
     sendResponse(res, {
         statusCode: 200,
         success: true,

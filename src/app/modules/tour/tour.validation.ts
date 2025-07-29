@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const createTourZodSchema = z.object({
     title: z.string(),
+    slug: z.string(),
     description: z.string(),
     location: z.string(),
     costFrom: z.number(),
@@ -10,9 +11,9 @@ export const createTourZodSchema = z.object({
     tourType: z.string(), // <- changed here
     included: z.array(z.string()),
     excluded: z.array(z.string()),
-    anenities: z.array(z.string()),
+    amenities: z.array(z.string()),
     tourPlan: z.array(z.string()),
-    maxGuests: z.number(),
+    maxGuest: z.number(),
     minAge: z.number(),
     divisionId: z.string(),
 });
