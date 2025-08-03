@@ -34,6 +34,16 @@ const getAllUsers = (async(req: Request, res: Response)=>{
             meta: result.meta
         })
 })
+const getSingleUser = (async(req: Request, res: Response)=>{
+        const id = req.params.id 
+        const result = await UserService.getSingleUser(id)
+        sendResponse(res, {
+            success: true,
+            statusCode: StatusCodes.OK,
+            message: "Users retrieved successfully",
+            data: result
+        })
+})
 const updatedUser = catchsync(async (req: Request, res: Response)=>{
         const userId = req.params.id;
         // const token = req.headers.authorization
@@ -55,6 +65,7 @@ const updatedUser = catchsync(async (req: Request, res: Response)=>{
 export const UseControllers ={
     createUser,
     getAllUsers,
+    getSingleUser,
     updatedUser,
 }
 
