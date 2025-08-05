@@ -9,10 +9,10 @@ export enum PAYMENT_STATUS{
     FAILED = "FAILED",
     REFUNDED = "REFUNDED"
 }
-export interface IPayement{
+export interface IPayment{
     booking: Types.ObjectId;
-    transectionId: string;
-    ammount: number;
+    transactionId: string;
+    amount: number;
     paymentGatewayData?: any;
     invoiceUrl?: string;
     status: PAYMENT_STATUS
