@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { StatusCodes } from "http-status-codes";
 import AppError from "../../errorHelper/AppError";
 import { User } from "../user/user.model";
