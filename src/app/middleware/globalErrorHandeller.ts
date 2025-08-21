@@ -10,11 +10,23 @@ import { handelDuplicateError } from "../helpers/handelDuplicateError";
 import { handelZodError } from "../helpers/handelZodError";
 import { handelValidationError } from "../helpers/handelValidationError";
 import { TErrorSource } from "../interfaces/error.types";
+import { deleteImageFromCLoudinary } from "../config/cloudinary.config";
 
 
-export const globalErrorHandeller = (error: Error, req: Request, res: Response, next: NextFunction) => {
+export const globalErrorHandeller = async (error: Error, req: Request, res: Response, next: NextFunction) => {
     if(process.env.NODE_ENV === "development"){
         console.log(error)
+    }
+
+    console.log({ file: req.files });
+    if (req.file) {
+        await deleteImageFromCLoudinary(req.file.path)
+    }
+
+    if (req.files && Array.isArray(req.files) && req.files.length) {
+        const imageUrls = (req.files as Express.Multer.File[]).map(file => file.path)
+
+        await Promise.all(imageUrls.map(url => deleteImageFromCLoudinary(url)))
     }
 
     let StatusCodes = 500;
