@@ -34,6 +34,17 @@ const getAllUsers = (async(req: Request, res: Response)=>{
             meta: result.meta
         })
 })
+
+const getMe = catchsync(async (req: Request, res: Response) => {
+    const decodedToken = req.user as JwtPayload;
+    const result = await UserService.getMe(decodedToken.userId);
+    sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: "Your profile retrieved successfully",
+        data: result.data
+    });
+});
 const getSingleUser = (async(req: Request, res: Response)=>{
         const id = req.params.id 
         const result = await UserService.getSingleUser(id)
@@ -67,6 +78,7 @@ export const UseControllers ={
     getAllUsers,
     getSingleUser,
     updatedUser,
+    getMe
 }
 
 // route matching -> controller -> service -> model -> DB
